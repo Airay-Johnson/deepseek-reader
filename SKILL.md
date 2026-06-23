@@ -5,13 +5,22 @@ description: 从 DeepSeek 网页版 (chat.deepseek.com) 读取对话历史和内
 
 # DeepSeek Reader — 读取 DeepSeek 网页对话
 
-从 chat.deepseek.com 提取你的对话历史和内容。通过浏览器自动化（Claude in Chrome / Edge / agent-browser）模拟用户操作，读取侧边栏对话列表和对话详情。
+独立项目，通过 Edge CDP + Windows Agent 提取 chat.deepseek.com 对话。
+
+**GitHub**：[Airay-Johnson/deepseek-reader](https://github.com/Airay-Johnson/deepseek-reader)
+**位置**：`C:\Users\17605\Desktop\新建文件夹 (2)\deepseek-reader\`
 
 ## 前置条件
 
-- 已在浏览器中登录 chat.deepseek.com
-- 浏览器已开启远程调试（Edge 需要 `--remote-debugging-port=9222`；Chrome 需要安装 Claude in Chrome 扩展）
-- 或已安装 `agent-browser` CLI（`npm install -g agent-browser && agent-browser install`）
+- Edge 浏览器 + 已在 chat.deepseek.com 登录
+- Windows Agent 运行中（`agent.ps1`）
+- Node.js（运行 `deepseek_bridge.cjs`）
+
+## GitHub 自动推送
+
+运行 `push-standalone.ps1`（通过 `push-standalone.bat` 启动）：
+- 自动创建 GitHub 仓库（需 git credential 中的 token）
+- 自动推送（Clash 代理 `127.0.0.1:12000`，**schannel** SSL 后端）
 
 ## 核心能力
 

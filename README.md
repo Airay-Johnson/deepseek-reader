@@ -75,17 +75,45 @@ node deepseek_bridge.cjs read 17   # 读第 17 个对话
 > "列出我的 DeepSeek 对话"
 > "读取 DeepSeek 第 3 个对话"
 
-## 文件说明
+## 移植到自己的设备
+
+### 方式一：下载 Release（推荐）
+
+从 [Releases](https://github.com/Airay-Johnson/deepseek-reader/releases) 下载 `deepseek-reader-v1.0.0.zip`，解压后：
+
+```batch
+setup-deepseek-bridge.bat       # 一键启动
+node deepseek_bridge.cjs list  # 列出对话
+```
+
+### 方式二：克隆仓库
+
+```bash
+git clone https://github.com/Airay-Johnson/deepseek-reader.git
+cd deepseek-reader
+setup-deepseek-bridge.bat
+```
+
+### 依赖
+
+| 依赖 | 说明 | 安装方式 |
+|------|------|---------|
+| Node.js 18+ | 运行桥接脚本 | `winget install OpenJS.NodeJS` |
+| Microsoft Edge | 浏览器自动化 | Windows 自带 |
+| DeepSeek 账号 | 登录 chat.deepseek.com | 免费注册 |
+
+### 目录结构
 
 ```
 deepseek-reader/
-├── README.md                    # 本文件
-├── SKILL.md                     # Cowork Skill 定义
-├── deepseek_bridge.cjs          # 核心桥接脚本（Node.js，零依赖）
-├── setup-deepseek-bridge.bat    # 一键启动脚本
-├── agent.ps1                    # Windows Agent（异步命令执行 + 截图）
-├── setup-auto-start.ps1         # Agent 开机自启配置
-└── edge-auto-start.ps1          # Edge 调试模式自动启动器
+├── deepseek_bridge.cjs       # 核心：CDP 客户端（零依赖）
+├── setup-deepseek-bridge.bat # 一键启动
+├── agent.ps1                 # Windows Agent（后台轮询）
+├── edge-auto-start.ps1       # Edge 调试模式启动
+├── push-standalone.ps1       # GitHub 自动推送
+├── SKILL.md                  # Cowork 技能定义
+├── README.md                 # 本文件
+└── LICENSE                   # MIT
 ```
 
 ## 技术细节

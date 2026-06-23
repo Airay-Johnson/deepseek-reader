@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package release
+        run: |
+          mkdir deepseek-reader
+          cp deepseek_bridge.cjs agent.ps1 edge-auto-start.ps1 setup-auto-start.ps1 setup-deepseek-bridge.bat start-agent-hidden.vbs README.md LICENSE deepseek-reader/
+          zip -r deepseek-reader-${{ github.ref_name }}.zip deepseek-reader/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: deepseek-reader-${{ github.ref_name }}.zip
+          generate_release_notes: true

@@ -27,43 +27,73 @@ description: 从 DeepSeek 网页版 (chat.deepseek.com) 读取对话历史和内
 ### 4. 读取最新对话
 快速获取最近一次对话的完整内容。
 
+## 项目位置
+
+**独立项目**，与 QDBMS 无关：
+```
+C:\Users\17605\Desktop\新建文件夹 (2)\deepseek-reader\
+```
+
+GitHub 仓库：`Airay-Johnson/deepseek-reader`
+
 ## 使用方式
 
-### 方式 A：Claude in Chrome（推荐）
-直接使用已连接的 Chrome 浏览器，工具最完善。
+### 推荐方式：Edge CDP + Windows Agent
 
-### 方式 B：Edge Browser
-使用 edge-browser 技能，需要 Edge 开启调试模式。
+已验证可用。流程：
 
-### 方式 C：Agent Browser CLI
-纯命令行操作，适合无 GUI 场景。
+1. **启动桥接**：双击 `setup-deepseek-bridge.bat` → 启动 Edge 调试模式 + Windows Agent
+2. **在 Edge 中登录** DeepSeek
+3. **在 Cowork 中使用**：通过 Windows Agent 执行 `deepseek_bridge.cjs`
+
+### 备选：Claude in Chrome / Agent Browser CLI
+
+如果对应工具可用，直接使用浏览器自动化工具即可。
 
 ---
 
-## 工作流程
+## 工作流程（通过 Windows Agent）
 
-### 步骤 1：打开 DeepSeek 页面
+### 步骤 1：检查 Agent 状态
 
-导航到 `https://chat.deepseek.com/`，等待页面加载。
+```bash
+cat /sessions/<session>/mnt/QDBMS/mcp-server/sys-heartbeat.json
+```
 
-- **Claude in Chrome**: `navigate(url="https://chat.deepseek.com/", tabId=N)`
-- **Edge**: 使用 `navigate` 工具
-- **Agent Browser**: `agent-browser open https://chat.deepseek.com/ && agent-browser wait --load networkidle`
+如果 Agent 不在线，提醒用户运行 `setup-deepseek-bridge.bat`。
 
-等待 3-5 秒确保页面完全加载（React 渲染 + 对话列表 API 请求完成）。
+### 步骤 2：启动 Edge 调试模式
 
-### 步骤 2：截图确认状态
+Agent 在线后，发送命令启动 Edge：
 
-先截图确认：
-- 是否已登录（未登录会看到登录页面）
-- 侧边栏对话列表是否已加载
-- 页面是否有错误提示
+```bash
+echo '{"command":"powershell -Command \\"...启动Edge CDP...\\"", "timeout":30}' > sys-cmd-N.json
+```
 
-如果未登录，提示用户先在浏览器中登录 DeepSeek，然后重试。
+Edge 启动后通过 CDP (端口 9222) 进行交互。
 
-### 步骤 3：提取对话列表
+### 步骤 3：执行桥接脚本
 
-执行以下 JavaScript 提取侧边栏对话列表：
+通过 Agent 运行 `deepseek_bridge.cjs`：
+
+```bash
+echo '{"command":"node D:\\...\\deepseek_bridge.cjs list", "timeout":30}' > sys-cmd-N.json
+```
+
+结果写入 `deepseek_result.json`，读取即可获得对话列表。
+
+### GitHub 自动推送
+
+更新项目后，推送脚本自动创建仓库并推送：
+```bash
+echo '{"command":"push-standalone.bat", "timeout":120}' > sys-cmd-N.json
+```
+
+---
+
+## 参考：JS 提取逻辑（备选）
+
+如果直接使用 CDP（不走桥接脚本），以下是可用的 JS 提取代码：
 
 ```javascript
 // DeepSeek 对话列表提取
